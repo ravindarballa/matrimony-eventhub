@@ -1,0 +1,109 @@
+{
+  "name": "eventhub",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/eventhub/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "apps/eventhub/dist",
+        "index": "apps/eventhub/src/index.html",
+        "baseHref": "/",
+        "main": "apps/eventhub/src/main.ts",
+        "tsConfig": "apps/eventhub/tsconfig.app.json",
+        "assets": [
+          "apps/eventhub/src/favicon.ico",
+          "apps/eventhub/src/assets"
+        ],
+        "styles": [
+          "apps/eventhub/src/styles.css"
+        ],
+        "scripts": [],
+        "webpackConfig": "apps/eventhub/webpack.config.ts",
+        "postcssConfig": "apps/eventhub/postcss.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/eventhub/src/environments/environment.ts",
+              "with": "apps/eventhub/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "webpackConfig": "apps/eventhub/webpack.config.prod.ts"
+        }
+      },
+      "dependsOn": [
+        "^build",
+        "typecheck"
+      ]
+    },
+    "serve": {
+      "executor": "@nx/react:module-federation-dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "eventhub:build",
+        "hmr": true,
+        "port": 4202
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "eventhub:build:development"
+        },
+        "production": {
+          "buildTarget": "eventhub:build:production",
+          "hmr": false
+        }
+      },
+      "dependsOn": [
+        "typecheck"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "executor": "@nx/react:module-federation-static-server",
+      "defaultConfiguration": "production",
+      "options": {
+        "serveTarget": "eventhub:serve"
+      },
+      "configurations": {
+        "development": {
+          "serveTarget": "eventhub:serve:development"
+        },
+        "production": {
+          "serveTarget": "eventhub:serve:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{projectRoot}/test-output/jest/coverage"
+      ],
+      "options": {
+        "jestConfig": "apps/eventhub/jest.config.ts"
+      }
+    }
+  }
+}
