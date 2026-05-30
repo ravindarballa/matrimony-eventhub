@@ -10,9 +10,7 @@ export function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     try {
-      // Send credentials to your NestJS backend
       const response = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -25,9 +23,12 @@ export function Login() {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Save JWT token for the session
+      // ✅ Save JWT token string
       localStorage.setItem('token', data.accessToken);
       
+      // ✅ Save User Metadata object (Crucial for linking profiles via data.user.id)
+      localStorage.setItem('user', JSON.stringify(data.user));
+
       // Redirect back to the central hub dashboard
       navigate('/');
     } catch (err: any) {
@@ -44,7 +45,6 @@ export function Login() {
           <p className="text-lg opacity-90">Join thousands of verified members managing matchmaking profiles seamlessly on our unified platform.</p>
         </div>
       </div>
-
       {/* Right Column: Interactive Login Form */}
       <div className="flex w-full lg:w-1/2 justify-center items-center p-8 bg-white">
         <form onSubmit={handleLogin} className="w-full max-w-md space-y-6">
@@ -52,46 +52,24 @@ export function Login() {
             <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
             <p className="text-sm text-gray-500 mt-1">Please enter your credentials to access your dashboard</p>
           </div>
-
           {error && (
             <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
               {error}
             </div>
           )}
-
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700">Email Address</label>
-              <input
-                type="email"
-                required
-                className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <input type="email" required className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-
             <div>
               <label className="block text-sm font-semibold text-gray-700">Password</label>
-              <input
-                type="password"
-                required
-                className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <input type="password" required className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
           </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-pink-600 text-white font-bold rounded-lg hover:bg-pink-700 active:scale-[0.98] transition-all shadow-md shadow-pink-200"
-          >
+          <button type="submit" className="w-full py-3 bg-pink-600 text-white font-bold rounded-lg hover:bg-pink-700 active:scale-[0.98] transition-all shadow-md shadow-pink-200" >
             Sign In
           </button>
-
           <p className="text-center text-sm text-gray-600">
             Don't have an account?{' '}
             <Link to="/register" className="font-semibold text-pink-600 no-underline hover:underline">
